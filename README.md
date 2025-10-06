@@ -49,9 +49,6 @@ A Chrome sidebar extension that uses the Gemini API to summarize web pages and p
 - **Gemini 2.5 Flash Lite** (default, fastest and most efficient)
 - **Gemini 2.5 Flash** (balanced speed and capability)
 - **Gemini 2.5 Pro** (most capable, latest model)
-- **Gemini 1.5 Flash** (legacy, fast)
-- **Gemini 1.5 Pro** (legacy, capable)
-- **Gemini 1.0 Pro** (legacy)
 
 ## Privacy
 
