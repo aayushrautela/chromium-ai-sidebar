@@ -303,22 +303,19 @@ class GeminiSummarizer {
       }
       const pageContent = response.content;
       const summaryStrength = await this.getSummaryStrength();
-      const summaryPrompt = this.getSummaryPrompt(summaryStrength)
-        .replace(/{title}/g, pageContent.title)
-        .replace(/{content}/g, pageContent.content)
-        .replace(/{url}/g, pageContent.url || '');
+      const summaryPrompt = getSummaryPrompt(summaryStrength, pageContent.title, pageContent.content);
       const summary = await this.callGeminiAPI(summaryPrompt, true);
       if (this.currentTabId !== operationTabId) {
         const targetTabChat = this.tabChats.get(operationTabId) || { messages: [], pageContent: null };
         targetTabChat.messages = [];
         targetTabChat.pageContent = pageContent;
-        targetTabChat.messages.push({ message: this.renderStructuredSummary(summary), sender: 'assistant', timestamp: new Date().toISOString() });
+        targetTabChat.messages.push({ message: this.renderApiResponse(summary), sender: 'assistant', timestamp: new Date().toISOString() });
         this.tabChats.set(operationTabId, targetTabChat);
       } else {
         this.currentPageContent = pageContent;
         this.chatHistory = [];
         this.chatMessages.innerHTML = '';
-        this.addMessageToChat(this.renderStructuredSummary(summary), 'assistant');
+        this.addMessageToChat(this.renderApiResponse(summary), 'assistant');
         this.saveTabChat();
         this.showChatInterface();
       }
@@ -541,59 +538,25 @@ class GeminiSummarizer {
     this.sendMessage();
   }
 
-  getSummaryPrompt(strength) {
-    const basePrompt = `Your task is to create a concise, scannable summary.
-Rules:
-No filler: Do not use any introductory phrases. Start directly with the "Main Idea".
-Be brief: Every word counts. Use the shortest possible phrasing.
-Return your response as valid JSON in the following structure:
-{
-  "mainIdea": "A single sentence, 20 words max",
-  "summary": [
-    "Critical point 1 - short paragraph of 2-3 lines",
-    "Critical point 2 - short paragraph of 2-3 lines", 
-    "Critical point 3 - short paragraph of 2-3 lines"
-  ],
-  "conclusion": "A single phrase or very short sentence, 15 words max",
-  "followUpQuestions": [
-    "Question 1?",
-    "Question 2?"
-  ]
-}
-Webpage Content to Analyze:
-Title: {title}
-Content:
-{content}`;
-    switch (strength) {
-      case 'short':
-        return basePrompt.replace(/short paragraph of 2-3 lines/g, 'brief sentence of 1-2 lines').replace(/20 words max/g, '25 words max').replace(/15 words max/g, '20 words max');
-      case 'medium':
-        return basePrompt.replace(/short paragraph of 2-3 lines/g, 'detailed paragraph of 4-5 lines').replace(/20 words max/g, '35 words max').replace(/15 words max/g, '30 words max');
-      case 'full':
-        return basePrompt.replace(/short paragraph of 2-3 lines/g, 'comprehensive paragraph of 6-8 lines').replace(/20 words max/g, '45 words max').replace(/15 words max/g, '40 words max');
-      default:
-        return basePrompt;
-    }
-  }
-
-  renderStructuredSummary(summaryData) {
+  renderApiResponse(apiResponse) {
     try {
-      const data = JSON.parse(summaryData);
+      const data = JSON.parse(apiResponse);
       let html = '<div class="structured-summary">';
-      if (data.mainIdea) html += `<h3 class="text-lg font-semibold mt-3 mb-2">Main Idea</h3><p class="mb-2">${data.mainIdea}</p>`;
-      if (data.summary && Array.isArray(data.summary)) {
-        html += `<h3 class="text-lg font-semibold mt-3 mb-2">Summary</h3><ul class="list-disc">${data.summary.map(point => `<li class="mb-1">${point}</li>`).join('')}</ul>`;
+      
+      if (data.summary) {
+        html += this.renderMarkdown(data.summary);
       }
-      if (data.conclusion) html += `<h3 class="text-lg font-semibold mt-3 mb-2">Conclusion</h3><p class="mb-2">${data.conclusion}</p>`;
+
       if (data.followUpQuestions && Array.isArray(data.followUpQuestions)) {
         const buttonsHtml = data.followUpQuestions.map(q => `<button class="question-btn">${q}</button>`).join('');
         html += `<div class="follow-up-questions"><h3 class="text-lg font-semibold mt-3 mb-2">Follow-up Questions</h3><div class="question-buttons">${buttonsHtml}</div></div>`;
       }
+
       html += '</div>';
       return html;
     } catch (error) {
-      console.error('Error parsing structured summary:', error);
-      return this.renderMarkdown(summaryData);
+      console.error('Error parsing API response:', error);
+      return this.renderMarkdown(apiResponse);
     }
   }
 
