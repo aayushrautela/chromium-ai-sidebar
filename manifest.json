@@ -6,8 +6,8 @@
   "permissions": [
     "activeTab",
     "storage",
-    "sidePanel",
-    "tabs"
+    "tabs",
+    "contextMenus"
   ],
   "host_permissions": [
     "https://generativelanguage.googleapis.com/*",
@@ -22,16 +22,19 @@
       "js": ["readability.js", "content.js"]
     }
   ],
-  "side_panel": {
-    "default_path": "sidebar.html"
-  },
   "action": {
-    "default_title": "Open Gemini Summarizer"
+    "default_title": "Toggle Gemini Summarizer"
   },
   "icons": {
     "16": "icons/icon16.png",
     "32": "icons/icon32.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["sidebar.html", "styles.css"],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }
