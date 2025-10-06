@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Page Summarizer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="sidebar-container">
+        <div class="header">
+            <div class="header-content">
+                <div class="title">
+                    <img id="tabFavicon" class="tab-favicon" src="" alt="Tab Favicon" style="display: none;">
+                    <svg id="defaultFavicon" class="title-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm-2.25 10a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm11 2a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0ZM12 8.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2ZM13.75 4a1.25 1.25 0 1 0 0-2.5 1.25 1.25 0 0 0 0 2.5ZM6 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm12.5-2.25a1.25 1.25 0 1 0 0-2.5 1.25 1.25 0 0 0 0 2.5ZM19 18a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/>
+                    </svg>
+                    <div id="currentTabTitle" class="tab-title"></div>
+                </div>
+                <div class="header-actions">
+                    <button id="summarizeBtn" class="btn btn-primary btn-small">
+                        <svg class="btn-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm-2.25 10a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm11 2a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0ZM12 8.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2ZM13.75 4a1.25 1.25 0 1 0 0-2.5 1.25 1.25 0 0 0 0 2.5ZM6 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm12.5-2.25a1.25 1.25 0 1 0 0-2.5 1.25 1.25 0 0 0 0 2.5ZM19 18a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/>
+                        </svg>
+                        Summarize
+                    </button>
+                    <button id="themeToggle" class="icon-btn" title="Toggle theme">
+                        <svg id="sunIcon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+                            <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM12 9c1.65 0 3 1.35 3 3s-1.35 3-3 3-3-1.35-3-3 1.35-3 3-3zm0-5c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 14c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-7-7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm14 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                        </svg>
+                        <svg id="moonIcon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                        </svg>
+                    </button>
+                    <button id="settingsBtn" class="icon-btn" title="Settings">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 15.5A3.5 3.5 0 0 1 8.5 12A3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5a3.5 3.5 0 0 1-3.5 3.5M19.43 12.97c.04-.32.07-.64.07-.97c0-.33-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63-.25-1.17.59-1.69-.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1c0 .33.03.65.07.97l-2.11 1.66c-.19-.15-.25.42-.12-.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.66Z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="settingsPanel" class="settings-panel hidden">
+            <div class="settings-content">
+                <h3>Settings</h3>
+                <div class="form-group">
+                    <label for="apiKey">Gemini API Key</label>
+                    <input type="password" id="apiKey" placeholder="Enter your API key">
+                </div>
+                <div class="form-group">
+                    <label for="model">Model</label>
+                    <select id="model">
+                        <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</option>
+                        <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+                        <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="summaryStrength">Summary Strength</label>
+                    <select id="summaryStrength">
+                        <option value="short">Short - Brief phrases</option>
+                        <option value="medium">Medium - Brief paragraphs</option>
+                        <option value="full">Full - Detailed paragraphs</option>
+                    </select>
+                    <small class="help-text">Controls the length and detail of summary points.</small>
+                </div>
+                <div class="form-actions">
+                    <button id="saveSettings" class="btn btn-primary">Save Settings</button>
+                    <button id="cancelSettings" class="btn btn-secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="chatInterface" class="content-section">
+            <div id="chatMessages" class="chat-messages">
+                </div>
+            
+            <div class="chat-input-container">
+                <div class="chat-input-wrapper">
+                    <textarea id="chatInput" placeholder="Ask a follow-up question..." rows="1"></textarea>
+                    <button id="sendBtn" class="send-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M2,21L23,12L2,3V10L17,12L2,14V21Z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="loadingState" class="content-section hidden">
+            <div class="loading-state">
+                <div class="loading-spinner"></div>
+                <h3>Analyzing Page...</h3>
+                <p>Extracting and processing content</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="marked.min.js"></script>
+    <script src="sidebar.js"></script>
+</body>
+</html>
